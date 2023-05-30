@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Object Detection</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<nav class="navbar navbar-dark bg-dark" style="p-5">
+  <span class="navbar-brand mb-0 h1">Object Detection</span>
+</nav>
+
+<body>
+
+    <h1>Object Detection</h1>
+    <div id="video-container">
+        <div class="card" style="width: 18rem;">
+  <img id="video-stream" src="/video_feed" class="card-img-top" alt="...">
+  <div class="card-body">
+    
+    <p class="card-text"></p>
+  </div>
+
+
+    </div>
+    <h2>Latest Detected Images</h2>
+    <div id="latest-detected-images">
+        {% for image in latest_detected_images %}
+            <img src="data:image/jpeg;base64,{{ image }}" alt="Detected Image">
+        {% endfor %}
+    </div>
+
+    <script>
+        function getLatestDetectedImages() {
+            fetch('/latest_detected')
+                .then(response => response.json())
+                .then(data => {
+                    const latestDetectedImagesDiv = document.getElementById('latest-detected-images');
+                    latestDetectedImagesDiv.innerHTML = '';
+                    data.forEach(image => {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = `data:image/jpeg;base64,${image}`;
+                        imgElement.alt = 'Detected Image';
+                        latestDetectedImagesDiv.appendChild(imgElement);
+                    });
+                })
+                .catch(error => console.error(error));
+        }
+
+        setInterval(getLatestDetectedImages, 2000);
+    </script>
+</body>
+</html>
